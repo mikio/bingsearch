@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Bing Search Tester (Basic)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <h1>Bing Search</h1>
+    <form method="GET" action="search">
+      <label for="dc">Count of reusult Data</label><br/>
+      <input name="dc" type="radio" value="10" CHECKED />10 
+      <input name="dc" type="radio" value="20" />20<br/>
+      <input name="dc" type="radio" value="50" />50<br/>
+      <label for="query">Query</label><br/>
+      <input name="query" type="text" size="60" maxlength="60" value="$(query)" />
+      <br /><br /> <input name="bt_search" type="submit" value="Search"/>
+    </form>
+    <h2>SearchResults</h2>
+    <div>
+      <!--
+      $(query)
+      $(results)
+      -->
+      [ $(query) ] のウェブ検索結果 （約$(total)件 $(fr) - $(to)件を表示）
+      <ul>
+      @(for results)
+        <li>
+          <div><a href="$(url)">$(title)</a></div>
+          <div>$(desc)</div>
+          <div>$(durl)</div>
+        </li>
+      @(end)
+      <div>
+        @(for pager)
+          @(if url)
+            <a href="$(url)">$(title)</a>
+          @(end)
+          @(if-not url)
+            $(title)
+          @(end)
+          &nbsp;&nbsp;
+        @(end)
+      </div>
+    </div>
+  </body>
+</html>
