@@ -52,24 +52,27 @@
 
 (defn frs
   "pagerに使用するためのfrパラメータを計算する"
-  [start dc width]
-  (range start (+ start (* width dc)) dc))
+  [start end dc]
+  ;;(range start (+ start (* width dc)) dc)
+  (range start end dc)
+  )
 
-(defn urls [frs pos query dc]
-  (for [fr frs] (if (= fr pos) nil (search-link query fr dc))))
+(defn urls [frs fr query dc]
+  (for [f frs] (if (= f fr) nil (search-link query f dc))))
 
-(defn pager [query fr dc width]
-  (let [pos (/ (+ fr dc) dc)
-        frs (frs 0 dc width)
+(defn pager [query fr dc width total]
+  (let [center (/ width 2)
+        max (/ total dc)
+        pos (/ (+ fr dc) dc)
+        spos (- pos center)
+        spos (if (< spos 0) 0 spos)
+        epos (+ spos width)
+        epos (if (> epos max) max epos)
+        frs (frs (* spos dc) (* epos dc) dc)
         titles (map #(/ (+ % dc) dc) frs)
         urls (urls frs fr query dc)
         ]
     (vec (map #(hash-map :title %1 :url %2) titles urls))))
-
-(defn view-pager [pager]
- (apply str (for [elm pager] (if-let [url (:url elm)]
-                     (str "<a href=\"" url "\">" (:title elm) "</a>&nbsp;&nbsp")
-                     (:title elm)))))
 
 (defn search-result [request]
   (let [query (:query (:params request))
@@ -87,11 +90,12 @@
         ;;result {:results (vec (for [title titles] {:title title}))}
         total (first (zipx/xml-> results :entry :content :m:properties :d:WebTotal zipx/text))
         ntotal (str->int total 0)
+        nto (if (< ntotal nto) ntotal nto)
         result {:query (str query)
-                :fr (str nfr)
+                :fr (str (+ nfr 1))
                 :to (str nto)
                 :total (str->comma ntotal)
-                :pager (pager query nfr ndc pager-width)
+                :pager (pager query nfr ndc pager-width ntotal)
                 :results (vec (map #(hash-map :title %1 :desc %2 :durl %3 :url %4)
                                    titles descs durls urls))}]
     (prn result)

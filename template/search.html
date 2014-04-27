@@ -6,12 +6,12 @@
   <body>
     <h1>Bing Search</h1>
     <form method="GET" action="search">
+      <input name="query" type="text" size="60" maxlength="60" value="$(query)" />
       <label for="dc">Count of reusult Data</label><br/>
       <input name="dc" type="radio" value="10" CHECKED />10 
       <input name="dc" type="radio" value="20" />20<br/>
       <input name="dc" type="radio" value="50" />50<br/>
       <label for="query">Query</label><br/>
-      <input name="query" type="text" size="60" maxlength="60" value="$(query)" />
       <br /><br /> <input name="bt_search" type="submit" value="Search"/>
     </form>
     <h2>SearchResults</h2>
